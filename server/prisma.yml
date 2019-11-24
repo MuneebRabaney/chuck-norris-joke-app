@@ -1,0 +1,9 @@
+endpoint: https://eu1.prisma.sh/muneeb-rabaney/ChuckNorrisJokeAppService/ChuckNorrisJokeAppServiceUAT
+datamodel:
+  - ./prisma/types.graphql
+  - ./prisma/inputs.graphql
+  - ./prisma/enums.graphql
+
+generate:
+  - generator: javascript-client
+    output: ./generated/prisma-client/

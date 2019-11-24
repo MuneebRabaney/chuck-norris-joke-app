@@ -1,0 +1,32 @@
+{
+  "colorList": [
+    {
+      "background": "#74ff74",
+      "text": "#000"
+    },
+    {
+      "background": "#FFFF00",
+      "text": "#000"
+    },
+    {
+      "background": "#c79bff",
+      "text": "#000"
+    },
+    {
+      "background": "#ff9bff",
+      "text": "#000"
+    },
+    {
+      "background": "#8F00FF",
+      "text": "#000"
+    },
+    {
+      "background": "#FF7F00",
+      "text": "#000"
+    },
+    {
+      "background": "#ffc0c0",
+      "text": "#000"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "chuck-norris-joke-app",
+  "version": "1.0.0",
+  "description": "Apollo fullstack boilerplate",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:client": "cd ./client && npm run start",
+    "start:server": "cd ./server && npm run start",
+    "start": "concurrently --kill-others npm:start:*"
+  },
+  "keywords": [
+    "Apollo",
+    "graphQl",
+    "ReactJS"
+  ],
+  "author": "Muneeb Rabaney",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.9.12",
+    "concurrently": "^5.0.0",
+    "graphql": "^14.5.8"
+  }
+}
