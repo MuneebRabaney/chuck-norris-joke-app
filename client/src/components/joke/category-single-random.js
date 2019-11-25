@@ -86,7 +86,7 @@ function CategorySingleRandom({ location, history }) {
   if (isRefetching || loading) return <LoadingSpinner />;
   if (error) return <CategoryNotFound error={error} />;
 
-  const { value, icon_url, url, categories, id } = data.randomJoke;
+  const { value, url, categories} = data.randomJoke;
 
   const handleDisplayCategories = (
     <Categories>
@@ -105,14 +105,14 @@ function CategorySingleRandom({ location, history }) {
     </JokeQuote>
   );
 
-  const handleMarkAsFavorite = () => {
-    const { id } = data.randomJoke;
+  // const handleMarkAsFavorite = () => {
+    // const { id } = data.randomJoke;
     // TODO:
     // must be logged in
     // get value from state
     // run mutation to add to User Favorite list
-    console.log(id);
-  };
+    // console.log(id);
+  // };
 
   const handlePreviousJoke = () => {};
 
@@ -122,7 +122,6 @@ function CategorySingleRandom({ location, history }) {
     <Fragment>
       {value && handleDisplayQuote}
       {categories.length && handleDisplayCategories}
-
       <Footer>
         <Button
           color='primary'

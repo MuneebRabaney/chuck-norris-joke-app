@@ -11,8 +11,8 @@ const typeDefs = gql`
 
   type User {
     id: ID!
-    first_name: String
-    last_name: String
+    firstname: String
+    lastname: String
     email: String
     password: String
     favroite_jokes: [String!]
@@ -21,11 +21,18 @@ const typeDefs = gql`
   type Query {
     jokeCategories: [String!]
     randomJoke(category: String): Joke
+    isLoggedIn: UserAuthPayload
   }
 
   type Mutation {
     createUser(data: UserNewDetailsInput!): User
-    login(inputs: UserLoginInput!): User
+    loginUser(data: UserLoginInput!): UserAuthPayload
+    currentUser(id: ID!): User
+  }
+
+  type UserAuthPayload {
+    token: String!
+    user: User!
   }
 
   input UserLoginInput {
@@ -34,8 +41,8 @@ const typeDefs = gql`
   }
 
   input UserNewDetailsInput {
-    first_name: String!
-    last_name: String!
+    firstname: String!
+    lastname: String!
     email: String!
     password: String!
   }

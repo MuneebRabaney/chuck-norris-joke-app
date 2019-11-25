@@ -22,6 +22,16 @@ const route = [
   },
 
   /**
+   * @description [ login a new user ]
+   *
+   * */
+  {
+    exact: true,
+    url: '/user/dashboard',
+    component: User.Dashboard,
+  },
+
+  /**
    * @description [ Joke categories marked as favorite ]
    *
    * */

@@ -1,8 +1,8 @@
-const UserResolvers = require('./user');
+const User = require('./user');
 
 const resolvers = {
   Mutation: {
-    ...UserResolvers,
+    ...User.mutations,
   },
 };
 

@@ -1,8 +1,10 @@
-const JokeResolvers = require('./joke');
+const Joke = require('./joke');
+const User = require('./user');
 
 const resolvers = {
   Query: {
-    ...JokeResolvers,
+    ...Joke.queries,
+    ...User.queries,
   },
 };
 

@@ -5,21 +5,13 @@ var typeDefs = require("./prisma-schema").typeDefs;
 
 var models = [
   {
-    name: "Joke",
-    embedded: false
-  },
-  {
     name: "User",
-    embedded: false
-  },
-  {
-    name: "Profile",
     embedded: false
   }
 ];
 exports.Prisma = prisma_lib_1.makePrismaClientClass({
   typeDefs,
   models,
-  endpoint: `https://eu1.prisma.sh/muneeb-rabaney/ChuckNorrisJokeAppService/ChuckNorrisJokeAppServiceUAT`
+  endpoint: `http://localhost:4466`
 });
 exports.prisma = new exports.Prisma();

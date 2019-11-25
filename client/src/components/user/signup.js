@@ -10,7 +10,7 @@ import {
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import SaveIcon from '@material-ui/icons/Save';
-import { CREATE_USER } from './mutations';
+import { CREATE_USER } from './types/mutations';
 import { useMutation } from '@apollo/react-hooks';
 
 const HoneyPot = styled.input`
@@ -26,8 +26,8 @@ function UserSignup({ location }) {
     form: {
       input: {
         email: '',
-        first_name: '',
-        last_name: '',
+        firstname: '',
+        lastname: '',
         password: '',
       },
       toggle: {
@@ -40,10 +40,10 @@ function UserSignup({ location }) {
   if (loading) return 'loading...';
   if (error) return 'Error!';
   if (data && data.createUser) {
-    const { email, password, first_name } = data.createUser;
+    const { email, password, firstname } = data.createUser;
     return (
       <div>
-        <h1>Welcome {first_name}</h1>
+        <h1>Welcome {firstname}</h1>
         <br />
         <p>Login below to get a better experience</p>
         <br />
@@ -52,7 +52,7 @@ function UserSignup({ location }) {
           component={Link}
           variant='contained'
           to={{
-            state: { email, password, first_name },
+            state: { email, password, firstname },
             pathname: '/user/login',
           }}>
           Login
@@ -97,7 +97,7 @@ function UserSignup({ location }) {
         <FormControl>
           <TextField
             required
-            id='first_name'
+            id='firstname'
             label='First Name'
             margin='normal'
             onChange={handleOnChange}
@@ -108,7 +108,7 @@ function UserSignup({ location }) {
           />
           <TextField
             required
-            id='last_name'
+            id='lastname'
             label='Last Name'
             margin='normal'
             onChange={handleOnChange}

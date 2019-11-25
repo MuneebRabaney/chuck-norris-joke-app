@@ -7,10 +7,9 @@ const typeDefs = require('./schema');
 const { prisma } = require('./generated/prisma-client');
 
 const getUser = token => {
+  console.log('getUser token', token);
   try {
-    if (token) {
-      return jwt.verify(token, 'my-secret-from-env-file-in-prod');
-    }
+    if (token) return jwt.verify(token, 'secret-key-goes-here');
     return null;
   } catch (err) {
     return null;
@@ -30,10 +29,9 @@ const server = new ApolloServer({
     const tokenWithBearer = req.headers.authorization || '';
     const token = tokenWithBearer.split(' ')[1];
     const user = getUser(token);
-
     return {
       user,
-      prisma, // the generated prisma client if you are using it
+      prisma,
     };
   },
 });

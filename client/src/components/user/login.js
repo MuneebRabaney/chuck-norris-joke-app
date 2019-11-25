@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, useCallback, Fragment } from 'react';
 import styled from 'styled-components';
 import {
   Button,
@@ -7,11 +7,12 @@ import {
   FormControl,
   InputAdornment,
 } from '@material-ui/core';
+import { LoadingSpinner } from '../loaders';
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
-import SaveIcon from '@material-ui/icons/Save';
-import { CREATE_USER } from './mutations';
+import { LOGIN_USER } from './types/mutations';
 import { useMutation } from '@apollo/react-hooks';
+import { useApolloClient } from '@apollo/react-hooks';
 
 const HoneyPot = styled.input`
   visibility: hidden;
@@ -20,7 +21,8 @@ const HoneyPot = styled.input`
 `;
 
 function Login({ location }) {
-  const [loginUser, { loading, error, data }] = useMutation(CREATE_USER);
+  const client = useApolloClient();
+  const [loginUser, { loading, error, data }] = useMutation(LOGIN_USER);
 
   const [state, setState] = useState({
     form: {
@@ -35,50 +37,56 @@ function Login({ location }) {
     },
   });
 
+  const updateUserEmail = useCallback(() => {
+    const { input } = state.form;
+    if (location.state && location.state.email !== input.email) {
+      const { input } = Object.assign({}, state.form);
+      input.email = location.state.email;
+      return setState({ ...state });
+    }
+  }, [location.state, state]);
+
   useEffect(() => {
-    persistLocationStateToLocalComponentState();
-  }, [location.state]);
-
-  console.log(state);
-
-  if (loading) return 'loading...';
-  if (error) return 'Error!';
-
-  if (data && data.loginUser) {
-    // redirect to joke categories
-    // write userLoggedIn to the cache store
-    if (data.loginUser.success) return 'Login Successful';
-    return 'Login Failed';
-  }
-
-  const persistLocationStateToLocalComponentState = () => {
-    const { input } = Object.assign({}, state.form);
-    input.email = location.state.email;
-    input.password = location.state.password;
-    setState({ ...state });
-  };
+    updateUserEmail();
+  }, [location.state, updateUserEmail]);
 
   const handleOnChange = event => {
     const { id, value } = event.currentTarget;
     const { input } = Object.assign({}, state.form);
     input[id] = value;
-    setState({ ...state });
+    return setState({ ...state });
   };
 
   const handleHoneyPot = event => {};
 
   const handleFormSubmission = event => {
     event.preventDefault();
-    const { input: inputs } = state.form;
-    loginUser({
-      variables: { inputs },
+    return loginUser({
+      variables: {
+        inputs: state.form.input,
+      },
     });
   };
+
+  const persistUserDetailsToGlobalState = async ({ data }) => {
+    await client.writeData({
+      data,
+    });
+
+    return data.loginUser.token;
+  };
+
+  const setTokenToLocalStorage = ({ token }) => {
+    console.log(token);
+    localStorage.setItem('token', token);
+  };
+
+  console.log(client);
 
   const handlePasswordVisibility = () => {
     const { toggle } = Object.assign({}, state.form);
     toggle.passwordVisibility = !toggle.passwordVisibility;
-    setState({ ...state });
+    return setState({ ...state });
   };
 
   const handleMouseDownPassword = event => {
@@ -86,6 +94,33 @@ function Login({ location }) {
   };
 
   const { toggle, errors, input } = state.form;
+
+  if (error) return 'Error!';
+  if (loading) return <LoadingSpinner />;
+
+  if (data) {
+    persistUserDetailsToGlobalState({ data }).then(token => {
+      setTokenToLocalStorage({
+        token,
+      });
+    });
+    return (
+      <Fragment>
+        <h2>Login Successful</h2>
+        <br />
+        <br />
+        <Button
+          color='primary'
+          component={Link}
+          variant='contained'
+          to={{
+            pathname: '/user/dashboard',
+          }}>
+          Go to dashboard
+        </Button>
+      </Fragment>
+    );
+  }
 
   return (
     <Fragment>

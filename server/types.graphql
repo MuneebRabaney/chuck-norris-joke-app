@@ -8,8 +8,8 @@ type Joke @db(name: "joke") {
 
 type User @db(name: "user") {
   id: ID! @id
-  first_name: String!
-  last_name: String!
+  firstname: String!
+  lastname: String!
   email: String! @unique
   password: String!
   favroite_jokes: [String] @scalarList(strategy: RELATION)
