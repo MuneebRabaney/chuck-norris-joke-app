@@ -16,6 +16,7 @@ export type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
 export type Maybe<T> = T | undefined | null;
 
 export interface Exists {
+  joke: (where?: JokeWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
 }
 
@@ -38,6 +39,25 @@ export interface Prisma {
    * Queries
    */
 
+  joke: (where: JokeWhereUniqueInput) => JokeNullablePromise;
+  jokes: (args?: {
+    where?: JokeWhereInput;
+    orderBy?: JokeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Joke>;
+  jokesConnection: (args?: {
+    where?: JokeWhereInput;
+    orderBy?: JokeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => JokeConnectionPromise;
   user: (where: UserWhereUniqueInput) => UserNullablePromise;
   users: (args?: {
     where?: UserWhereInput;
@@ -63,6 +83,22 @@ export interface Prisma {
    * Mutations
    */
 
+  createJoke: (data: JokeCreateInput) => JokePromise;
+  updateJoke: (args: {
+    data: JokeUpdateInput;
+    where: JokeWhereUniqueInput;
+  }) => JokePromise;
+  updateManyJokes: (args: {
+    data: JokeUpdateManyMutationInput;
+    where?: JokeWhereInput;
+  }) => BatchPayloadPromise;
+  upsertJoke: (args: {
+    where: JokeWhereUniqueInput;
+    create: JokeCreateInput;
+    update: JokeUpdateInput;
+  }) => JokePromise;
+  deleteJoke: (where: JokeWhereUniqueInput) => JokePromise;
+  deleteManyJokes: (where?: JokeWhereInput) => BatchPayloadPromise;
   createUser: (data: UserCreateInput) => UserPromise;
   updateUser: (args: {
     data: UserUpdateInput;
@@ -88,6 +124,9 @@ export interface Prisma {
 }
 
 export interface Subscription {
+  joke: (
+    where?: JokeSubscriptionWhereInput
+  ) => JokeSubscriptionPayloadSubscription;
   user: (
     where?: UserSubscriptionWhereInput
   ) => UserSubscriptionPayloadSubscription;
@@ -100,6 +139,16 @@ export interface ClientConstructor<T> {
 /**
  * Types
  */
+
+export type JokeOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "url_ASC"
+  | "url_DESC"
+  | "value_ASC"
+  | "value_DESC"
+  | "icon_url_ASC"
+  | "icon_url_DESC";
 
 export type UserOrderByInput =
   | "id_ASC"
@@ -115,26 +164,149 @@ export type UserOrderByInput =
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
+export interface JokeUpdateInput {
+  url?: Maybe<String>;
+  value?: Maybe<String>;
+  icon_url?: Maybe<String>;
+  categories?: Maybe<JokeUpdatecategoriesInput>;
+}
+
+export type JokeWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface JokeUpdateDataInput {
+  url?: Maybe<String>;
+  value?: Maybe<String>;
+  icon_url?: Maybe<String>;
+  categories?: Maybe<JokeUpdatecategoriesInput>;
+}
+
 export interface UserCreateInput {
   id?: Maybe<ID_Input>;
   firstname: String;
   lastname: String;
   email: String;
   password: String;
+  favroite_jokes?: Maybe<JokeCreateManyInput>;
 }
 
-export interface UserUpdateInput {
-  firstname?: Maybe<String>;
-  lastname?: Maybe<String>;
-  email?: Maybe<String>;
-  password?: Maybe<String>;
+export interface JokeUpdateWithWhereUniqueNestedInput {
+  where: JokeWhereUniqueInput;
+  data: JokeUpdateDataInput;
 }
 
-export interface UserUpdateManyMutationInput {
-  firstname?: Maybe<String>;
-  lastname?: Maybe<String>;
+export interface JokeWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  url?: Maybe<String>;
+  url_not?: Maybe<String>;
+  url_in?: Maybe<String[] | String>;
+  url_not_in?: Maybe<String[] | String>;
+  url_lt?: Maybe<String>;
+  url_lte?: Maybe<String>;
+  url_gt?: Maybe<String>;
+  url_gte?: Maybe<String>;
+  url_contains?: Maybe<String>;
+  url_not_contains?: Maybe<String>;
+  url_starts_with?: Maybe<String>;
+  url_not_starts_with?: Maybe<String>;
+  url_ends_with?: Maybe<String>;
+  url_not_ends_with?: Maybe<String>;
+  value?: Maybe<String>;
+  value_not?: Maybe<String>;
+  value_in?: Maybe<String[] | String>;
+  value_not_in?: Maybe<String[] | String>;
+  value_lt?: Maybe<String>;
+  value_lte?: Maybe<String>;
+  value_gt?: Maybe<String>;
+  value_gte?: Maybe<String>;
+  value_contains?: Maybe<String>;
+  value_not_contains?: Maybe<String>;
+  value_starts_with?: Maybe<String>;
+  value_not_starts_with?: Maybe<String>;
+  value_ends_with?: Maybe<String>;
+  value_not_ends_with?: Maybe<String>;
+  icon_url?: Maybe<String>;
+  icon_url_not?: Maybe<String>;
+  icon_url_in?: Maybe<String[] | String>;
+  icon_url_not_in?: Maybe<String[] | String>;
+  icon_url_lt?: Maybe<String>;
+  icon_url_lte?: Maybe<String>;
+  icon_url_gt?: Maybe<String>;
+  icon_url_gte?: Maybe<String>;
+  icon_url_contains?: Maybe<String>;
+  icon_url_not_contains?: Maybe<String>;
+  icon_url_starts_with?: Maybe<String>;
+  icon_url_not_starts_with?: Maybe<String>;
+  icon_url_ends_with?: Maybe<String>;
+  icon_url_not_ends_with?: Maybe<String>;
+  AND?: Maybe<JokeWhereInput[] | JokeWhereInput>;
+  OR?: Maybe<JokeWhereInput[] | JokeWhereInput>;
+  NOT?: Maybe<JokeWhereInput[] | JokeWhereInput>;
+}
+
+export interface JokeUpdateManyInput {
+  create?: Maybe<JokeCreateInput[] | JokeCreateInput>;
+  update?: Maybe<
+    | JokeUpdateWithWhereUniqueNestedInput[]
+    | JokeUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | JokeUpsertWithWhereUniqueNestedInput[]
+    | JokeUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<JokeWhereUniqueInput[] | JokeWhereUniqueInput>;
+  connect?: Maybe<JokeWhereUniqueInput[] | JokeWhereUniqueInput>;
+  set?: Maybe<JokeWhereUniqueInput[] | JokeWhereUniqueInput>;
+  disconnect?: Maybe<JokeWhereUniqueInput[] | JokeWhereUniqueInput>;
+  deleteMany?: Maybe<JokeScalarWhereInput[] | JokeScalarWhereInput>;
+  updateMany?: Maybe<
+    JokeUpdateManyWithWhereNestedInput[] | JokeUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface JokeSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<JokeWhereInput>;
+  AND?: Maybe<JokeSubscriptionWhereInput[] | JokeSubscriptionWhereInput>;
+  OR?: Maybe<JokeSubscriptionWhereInput[] | JokeSubscriptionWhereInput>;
+  NOT?: Maybe<JokeSubscriptionWhereInput[] | JokeSubscriptionWhereInput>;
+}
+
+export interface JokeUpdateManyDataInput {
+  url?: Maybe<String>;
+  value?: Maybe<String>;
+  icon_url?: Maybe<String>;
+  categories?: Maybe<JokeUpdatecategoriesInput>;
+}
+
+export type UserWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
   email?: Maybe<String>;
-  password?: Maybe<String>;
+}>;
+
+export interface JokeCreateInput {
+  id?: Maybe<ID_Input>;
+  url?: Maybe<String>;
+  value: String;
+  icon_url?: Maybe<String>;
+  categories?: Maybe<JokeCreatecategoriesInput>;
 }
 
 export interface UserWhereInput {
@@ -208,9 +380,16 @@ export interface UserWhereInput {
   password_not_starts_with?: Maybe<String>;
   password_ends_with?: Maybe<String>;
   password_not_ends_with?: Maybe<String>;
+  favroite_jokes_every?: Maybe<JokeWhereInput>;
+  favroite_jokes_some?: Maybe<JokeWhereInput>;
+  favroite_jokes_none?: Maybe<JokeWhereInput>;
   AND?: Maybe<UserWhereInput[] | UserWhereInput>;
   OR?: Maybe<UserWhereInput[] | UserWhereInput>;
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
+}
+
+export interface JokeCreatecategoriesInput {
+  set?: Maybe<String[] | String>;
 }
 
 export interface UserSubscriptionWhereInput {
@@ -224,29 +403,112 @@ export interface UserSubscriptionWhereInput {
   NOT?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
 }
 
-export type UserWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
+export interface JokeCreateManyInput {
+  create?: Maybe<JokeCreateInput[] | JokeCreateInput>;
+  connect?: Maybe<JokeWhereUniqueInput[] | JokeWhereUniqueInput>;
+}
+
+export interface JokeUpdateManyMutationInput {
+  url?: Maybe<String>;
+  value?: Maybe<String>;
+  icon_url?: Maybe<String>;
+  categories?: Maybe<JokeUpdatecategoriesInput>;
+}
+
+export interface JokeUpdatecategoriesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface UserUpdateInput {
+  firstname?: Maybe<String>;
+  lastname?: Maybe<String>;
   email?: Maybe<String>;
-}>;
+  password?: Maybe<String>;
+  favroite_jokes?: Maybe<JokeUpdateManyInput>;
+}
+
+export interface UserUpdateManyMutationInput {
+  firstname?: Maybe<String>;
+  lastname?: Maybe<String>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+}
+
+export interface JokeUpsertWithWhereUniqueNestedInput {
+  where: JokeWhereUniqueInput;
+  update: JokeUpdateDataInput;
+  create: JokeCreateInput;
+}
+
+export interface JokeScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  url?: Maybe<String>;
+  url_not?: Maybe<String>;
+  url_in?: Maybe<String[] | String>;
+  url_not_in?: Maybe<String[] | String>;
+  url_lt?: Maybe<String>;
+  url_lte?: Maybe<String>;
+  url_gt?: Maybe<String>;
+  url_gte?: Maybe<String>;
+  url_contains?: Maybe<String>;
+  url_not_contains?: Maybe<String>;
+  url_starts_with?: Maybe<String>;
+  url_not_starts_with?: Maybe<String>;
+  url_ends_with?: Maybe<String>;
+  url_not_ends_with?: Maybe<String>;
+  value?: Maybe<String>;
+  value_not?: Maybe<String>;
+  value_in?: Maybe<String[] | String>;
+  value_not_in?: Maybe<String[] | String>;
+  value_lt?: Maybe<String>;
+  value_lte?: Maybe<String>;
+  value_gt?: Maybe<String>;
+  value_gte?: Maybe<String>;
+  value_contains?: Maybe<String>;
+  value_not_contains?: Maybe<String>;
+  value_starts_with?: Maybe<String>;
+  value_not_starts_with?: Maybe<String>;
+  value_ends_with?: Maybe<String>;
+  value_not_ends_with?: Maybe<String>;
+  icon_url?: Maybe<String>;
+  icon_url_not?: Maybe<String>;
+  icon_url_in?: Maybe<String[] | String>;
+  icon_url_not_in?: Maybe<String[] | String>;
+  icon_url_lt?: Maybe<String>;
+  icon_url_lte?: Maybe<String>;
+  icon_url_gt?: Maybe<String>;
+  icon_url_gte?: Maybe<String>;
+  icon_url_contains?: Maybe<String>;
+  icon_url_not_contains?: Maybe<String>;
+  icon_url_starts_with?: Maybe<String>;
+  icon_url_not_starts_with?: Maybe<String>;
+  icon_url_ends_with?: Maybe<String>;
+  icon_url_not_ends_with?: Maybe<String>;
+  AND?: Maybe<JokeScalarWhereInput[] | JokeScalarWhereInput>;
+  OR?: Maybe<JokeScalarWhereInput[] | JokeScalarWhereInput>;
+  NOT?: Maybe<JokeScalarWhereInput[] | JokeScalarWhereInput>;
+}
+
+export interface JokeUpdateManyWithWhereNestedInput {
+  where: JokeScalarWhereInput;
+  data: JokeUpdateManyDataInput;
+}
 
 export interface NodeNode {
   id: ID_Output;
-}
-
-export interface AggregateUser {
-  count: Int;
-}
-
-export interface AggregateUserPromise
-  extends Promise<AggregateUser>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateUserSubscription
-  extends Promise<AsyncIterator<AggregateUser>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface BatchPayload {
@@ -263,6 +525,23 @@ export interface BatchPayloadSubscription
   extends Promise<AsyncIterator<BatchPayload>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Long>>;
+}
+
+export interface JokeEdge {
+  node: Joke;
+  cursor: String;
+}
+
+export interface JokeEdgePromise extends Promise<JokeEdge>, Fragmentable {
+  node: <T = JokePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface JokeEdgeSubscription
+  extends Promise<AsyncIterator<JokeEdge>>,
+    Fragmentable {
+  node: <T = JokeSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface UserPreviousValues {
@@ -293,6 +572,155 @@ export interface UserPreviousValuesSubscription
   password: () => Promise<AsyncIterator<String>>;
 }
 
+export interface JokeConnection {
+  pageInfo: PageInfo;
+  edges: JokeEdge[];
+}
+
+export interface JokeConnectionPromise
+  extends Promise<JokeConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<JokeEdge>>() => T;
+  aggregate: <T = AggregateJokePromise>() => T;
+}
+
+export interface JokeConnectionSubscription
+  extends Promise<AsyncIterator<JokeConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<JokeEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateJokeSubscription>() => T;
+}
+
+export interface JokePreviousValues {
+  id: ID_Output;
+  url?: String;
+  value: String;
+  icon_url?: String;
+  categories: String[];
+}
+
+export interface JokePreviousValuesPromise
+  extends Promise<JokePreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  url: () => Promise<String>;
+  value: () => Promise<String>;
+  icon_url: () => Promise<String>;
+  categories: () => Promise<String[]>;
+}
+
+export interface JokePreviousValuesSubscription
+  extends Promise<AsyncIterator<JokePreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  url: () => Promise<AsyncIterator<String>>;
+  value: () => Promise<AsyncIterator<String>>;
+  icon_url: () => Promise<AsyncIterator<String>>;
+  categories: () => Promise<AsyncIterator<String[]>>;
+}
+
+export interface JokeSubscriptionPayload {
+  mutation: MutationType;
+  node: Joke;
+  updatedFields: String[];
+  previousValues: JokePreviousValues;
+}
+
+export interface JokeSubscriptionPayloadPromise
+  extends Promise<JokeSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = JokePromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = JokePreviousValuesPromise>() => T;
+}
+
+export interface JokeSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<JokeSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = JokeSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = JokePreviousValuesSubscription>() => T;
+}
+
+export interface Joke {
+  id: ID_Output;
+  url?: String;
+  value: String;
+  icon_url?: String;
+  categories: String[];
+}
+
+export interface JokePromise extends Promise<Joke>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  url: () => Promise<String>;
+  value: () => Promise<String>;
+  icon_url: () => Promise<String>;
+  categories: () => Promise<String[]>;
+}
+
+export interface JokeSubscription
+  extends Promise<AsyncIterator<Joke>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  url: () => Promise<AsyncIterator<String>>;
+  value: () => Promise<AsyncIterator<String>>;
+  icon_url: () => Promise<AsyncIterator<String>>;
+  categories: () => Promise<AsyncIterator<String[]>>;
+}
+
+export interface JokeNullablePromise
+  extends Promise<Joke | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  url: () => Promise<String>;
+  value: () => Promise<String>;
+  icon_url: () => Promise<String>;
+  categories: () => Promise<String[]>;
+}
+
+export interface PageInfo {
+  hasNextPage: Boolean;
+  hasPreviousPage: Boolean;
+  startCursor?: String;
+  endCursor?: String;
+}
+
+export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
+  hasNextPage: () => Promise<Boolean>;
+  hasPreviousPage: () => Promise<Boolean>;
+  startCursor: () => Promise<String>;
+  endCursor: () => Promise<String>;
+}
+
+export interface PageInfoSubscription
+  extends Promise<AsyncIterator<PageInfo>>,
+    Fragmentable {
+  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
+  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
+  startCursor: () => Promise<AsyncIterator<String>>;
+  endCursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateUser {
+  count: Int;
+}
+
+export interface AggregateUserPromise
+  extends Promise<AggregateUser>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateUserSubscription
+  extends Promise<AsyncIterator<AggregateUser>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface UserEdge {
   node: User;
   cursor: String;
@@ -308,6 +736,85 @@ export interface UserEdgeSubscription
     Fragmentable {
   node: <T = UserSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateJoke {
+  count: Int;
+}
+
+export interface AggregateJokePromise
+  extends Promise<AggregateJoke>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateJokeSubscription
+  extends Promise<AsyncIterator<AggregateJoke>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface User {
+  id: ID_Output;
+  firstname: String;
+  lastname: String;
+  email: String;
+  password: String;
+}
+
+export interface UserPromise extends Promise<User>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  firstname: () => Promise<String>;
+  lastname: () => Promise<String>;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
+  favroite_jokes: <T = FragmentableArray<Joke>>(args?: {
+    where?: JokeWhereInput;
+    orderBy?: JokeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface UserSubscription
+  extends Promise<AsyncIterator<User>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  firstname: () => Promise<AsyncIterator<String>>;
+  lastname: () => Promise<AsyncIterator<String>>;
+  email: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
+  favroite_jokes: <T = Promise<AsyncIterator<JokeSubscription>>>(args?: {
+    where?: JokeWhereInput;
+    orderBy?: JokeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface UserNullablePromise
+  extends Promise<User | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  firstname: () => Promise<String>;
+  lastname: () => Promise<String>;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
+  favroite_jokes: <T = FragmentableArray<Joke>>(args?: {
+    where?: JokeWhereInput;
+    orderBy?: JokeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface UserSubscriptionPayload {
@@ -335,42 +842,6 @@ export interface UserSubscriptionPayloadSubscription
   previousValues: <T = UserPreviousValuesSubscription>() => T;
 }
 
-export interface User {
-  id: ID_Output;
-  firstname: String;
-  lastname: String;
-  email: String;
-  password: String;
-}
-
-export interface UserPromise extends Promise<User>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  firstname: () => Promise<String>;
-  lastname: () => Promise<String>;
-  email: () => Promise<String>;
-  password: () => Promise<String>;
-}
-
-export interface UserSubscription
-  extends Promise<AsyncIterator<User>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  firstname: () => Promise<AsyncIterator<String>>;
-  lastname: () => Promise<AsyncIterator<String>>;
-  email: () => Promise<AsyncIterator<String>>;
-  password: () => Promise<AsyncIterator<String>>;
-}
-
-export interface UserNullablePromise
-  extends Promise<User | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  firstname: () => Promise<String>;
-  lastname: () => Promise<String>;
-  email: () => Promise<String>;
-  password: () => Promise<String>;
-}
-
 export interface UserConnection {
   pageInfo: PageInfo;
   edges: UserEdge[];
@@ -392,33 +863,10 @@ export interface UserConnectionSubscription
   aggregate: <T = AggregateUserSubscription>() => T;
 }
 
-export interface PageInfo {
-  hasNextPage: Boolean;
-  hasPreviousPage: Boolean;
-  startCursor?: String;
-  endCursor?: String;
-}
-
-export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
-  hasNextPage: () => Promise<Boolean>;
-  hasPreviousPage: () => Promise<Boolean>;
-  startCursor: () => Promise<String>;
-  endCursor: () => Promise<String>;
-}
-
-export interface PageInfoSubscription
-  extends Promise<AsyncIterator<PageInfo>>,
-    Fragmentable {
-  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
-  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
-  startCursor: () => Promise<AsyncIterator<String>>;
-  endCursor: () => Promise<AsyncIterator<String>>;
-}
-
 /*
-The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+The `Boolean` scalar type represents `true` or `false`.
 */
-export type String = string;
+export type Boolean = boolean;
 
 export type Long = string;
 
@@ -429,14 +877,14 @@ export type ID_Input = string | number;
 export type ID_Output = string;
 
 /*
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+*/
+export type String = string;
+
+/*
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
 */
 export type Int = number;
-
-/*
-The `Boolean` scalar type represents `true` or `false`.
-*/
-export type Boolean = boolean;
 
 /**
  * Model Metadata
@@ -445,6 +893,10 @@ export type Boolean = boolean;
 export const models: Model[] = [
   {
     name: "User",
+    embedded: false
+  },
+  {
+    name: "Joke",
     embedded: false
   }
 ];

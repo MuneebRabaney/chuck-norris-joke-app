@@ -1,7 +1,16 @@
-type User {
+type User @db(name: "user")  {
   id: ID! @id
   firstname: String!
   lastname: String!
   email: String! @unique
   password: String!
+  favroite_jokes: [Joke!] @scalarList(strategy: RELATION)
+}
+
+type Joke @db(name: "joke") {
+  id: ID! @id
+  url: String
+  value: String!
+  icon_url: String
+  categories: [String] @scalarList(strategy: RELATION)
 }

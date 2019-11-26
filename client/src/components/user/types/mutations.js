@@ -36,4 +36,26 @@ const USER_AUTHENTICATED = gql`
   }
 `;
 
-export { CREATE_USER, LOGIN_USER, USER_AUTHENTICATED };
+const ADD_TO_FAV = gql`
+  mutation addJokeToFav($inputs: UserUpdateInput) {
+    addJokeToFav(data: $inputs) {
+      favroite_jokes
+    }
+  }
+`;
+
+const REMOVE_TO_FAV = gql`
+  mutation removeJokeToFav($where: ID!) {
+    removeJokeToFav(where: $) {
+      favroite_jokes
+    }
+  }
+`;
+
+export {
+  CREATE_USER,
+  LOGIN_USER,
+  USER_AUTHENTICATED,
+  ADD_TO_FAV,
+  REMOVE_TO_FAV,
+};

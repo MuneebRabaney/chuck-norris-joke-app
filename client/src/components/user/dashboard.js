@@ -1,9 +1,9 @@
-import React, { useState, Fragment, useEffect, useCallback } from 'react';
+import React, { useState, Fragment } from 'react';
 import { Button } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 import { IS_LOGGED_IN } from './types/queries';
 import { useApolloClient } from '@apollo/react-hooks';
-import { CategoryList } from '../joke';
+// import { CategoryList } from '../joke';
 import styled from 'styled-components';
 
 const Footer = styled.footer`
