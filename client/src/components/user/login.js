@@ -69,19 +69,18 @@ function Login({ location }) {
   };
 
   const persistUserDetailsToGlobalState = async ({ data }) => {
-    await client.writeData({
-      data,
-    });
-
-    return data.loginUser.token;
+    const { token } = data.loginUser;
+    data.isLoggedIn = token && true;
+    await client.writeData({ data });
+    return token;
   };
 
   const setTokenToLocalStorage = ({ token }) => {
-    console.log(token);
+    // console.log(token);
     localStorage.setItem('token', token);
   };
 
-  console.log(client);
+  // console.log(client);
 
   const handlePasswordVisibility = () => {
     const { toggle } = Object.assign({}, state.form);
@@ -98,7 +97,7 @@ function Login({ location }) {
   if (error) return 'Error!';
   if (loading) return <LoadingSpinner />;
 
-  if (data) {
+  if (data && !loading) {
     persistUserDetailsToGlobalState({ data }).then(token => {
       setTokenToLocalStorage({
         token,
@@ -117,6 +116,15 @@ function Login({ location }) {
             pathname: '/user/dashboard',
           }}>
           Go to dashboard
+        </Button>
+        <Button
+          color='primary'
+          component={Link}
+          variant='contained'
+          to={{
+            pathname: '/jokes/categories',
+          }}>
+          Go to joke categories
         </Button>
       </Fragment>
     );

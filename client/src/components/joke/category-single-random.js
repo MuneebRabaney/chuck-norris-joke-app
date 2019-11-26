@@ -1,12 +1,14 @@
-import React, { Fragment } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Link } from 'react-router-dom';
 import { LoadingSpinner } from '../loaders';
 import { CategoryNotFound } from '../errors';
 import { Button, Fab } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-import { GET_RANDOM_JOKE } from './queries';
+import { GET_RANDOM_JOKE } from './types/queries';
+import { IS_LOGGED_IN } from '../user/types/queries';
 
 const JokeQuote = styled.blockquote`
   text-align: left;
@@ -58,7 +60,7 @@ const Footer = styled.footer`
   }
   button {
     margin-right: 10px;
-    &:last-child {
+    &: [aria-label= 'like' ] {
       width: 38px;
       height: 30px;
       float: right;
@@ -68,6 +70,34 @@ const Footer = styled.footer`
 `;
 
 function CategorySingleRandom({ location, history }) {
+  const client = useApolloClient();
+  const { isLoggedIn } = client.readQuery({ query: IS_LOGGED_IN });
+  const [state, setState] = useState({
+    user: {
+      isLoggedOut: isLoggedIn,
+    },
+  });
+
+  const updateLoginState = useCallback(() => {
+    const newState = Object.assign({}, state);
+    newState.user.isLoggedOut = !state.user.isLoggedOut;
+    setState(newState);
+  }, [state]);
+
+  useEffect(() => {
+    updateLoginState();
+  }, [state.user]);
+
+  const handleLogoutUser = event => {
+    localStorage.removeItem('token');
+    client.writeData({
+      data: {
+        isLoggedOut: true,
+      },
+    });
+    updateLoginState();
+  };
+
   const queryOptions = {
     fetchPolicy: 'no-cache',
     notifyOnNetworkStatusChange: true,
@@ -86,7 +116,7 @@ function CategorySingleRandom({ location, history }) {
   if (isRefetching || loading) return <LoadingSpinner />;
   if (error) return <CategoryNotFound error={error} />;
 
-  const { value, url, categories} = data.randomJoke;
+  const { value, url, categories } = data.randomJoke;
 
   const handleDisplayCategories = (
     <Categories>
@@ -106,20 +136,37 @@ function CategorySingleRandom({ location, history }) {
   );
 
   // const handleMarkAsFavorite = () => {
-    // const { id } = data.randomJoke;
-    // TODO:
-    // must be logged in
-    // get value from state
-    // run mutation to add to User Favorite list
-    // console.log(id);
+  // const { id } = data.randomJoke;
+  // TODO:
+  // must be logged in
+  // get value from state
+  // run mutation to add to User Favorite list
+  // console.log(id);
   // };
 
   const handlePreviousJoke = () => {};
 
   const handleNextJoke = () => refetch();
 
+  const renderUserLoginButton = (
+    <Link to={{ pathname: '/user/login' }}>
+      <span>User login</span>
+    </Link>
+  );
+
+  const renderUserLogoutButton = (
+    <Button onClick={handleLogoutUser}>
+      <span>Logout</span>
+    </Button>
+  );
+
+  const { isLoggedOut } = state.user;
+  console.log('isLoggedIn', isLoggedIn);
+  console.log('isLoggedOut', isLoggedOut);
   return (
     <Fragment>
+      {isLoggedIn && !isLoggedOut && renderUserLogoutButton}
+      {isLoggedOut && renderUserLoginButton}
       {value && handleDisplayQuote}
       {categories.length && handleDisplayCategories}
       <Footer>
@@ -139,9 +186,11 @@ function CategorySingleRandom({ location, history }) {
         <Button color='primary' variant='contained' onClick={handleNextJoke}>
           Next
         </Button>
-        <Fab aria-label='like'>
-          <FavoriteIcon color='secondary' fontSize='small' />
-        </Fab>
+        {isLoggedIn && !isLoggedOut && (
+          <Fab aria-label='like'>
+            <FavoriteIcon color='secondary' fontSize='small' />
+          </Fab>
+        )}
       </Footer>
     </Fragment>
   );

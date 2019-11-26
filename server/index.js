@@ -7,7 +7,7 @@ const typeDefs = require('./schema');
 const { prisma } = require('./generated/prisma-client');
 
 const getUser = token => {
-  console.log('getUser token', token);
+  // console.log('getUser token', token);
   try {
     if (token) return jwt.verify(token, 'secret-key-goes-here');
     return null;

@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, Fragment, useEffect, useCallback } from 'react';
 import { Button } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 import { IS_LOGGED_IN } from './types/queries';
@@ -15,31 +15,32 @@ const Footer = styled.footer`
 `;
 
 function Dashboard({ location }) {
+  const client = useApolloClient();
   const [state, setState] = useState({
     user: {
-      isLoggedOut: null,
+      isLoggedOut: false,
     },
   });
 
-  const client = useApolloClient();
-
-  const { isLoggedIn } = client.readQuery({
-    query: IS_LOGGED_IN,
-  });
+  const { isLoggedIn } = client.readQuery({ query: IS_LOGGED_IN });
 
   const handleLogoutUser = event => {
-    const { user } = Object.assign({}, state);
-    user.isLoggedOut = true;
-    setState({ ...state });
+    const newState = Object.assign({}, state);
+    newState.user.isLoggedOut = true;
+    setState(newState);
     localStorage.removeItem('token');
+    client.resetStore();
   };
+
+  if (state.user.isLoggedOut) {
+    return <Redirect to='/user/login' />;
+  }
 
   if (isLoggedIn) {
     return (
       <Fragment>
         <h2>Hello #username </h2>
         <br />
-        <CategoryList />
         <Footer>
           <Button
             color='primary'
@@ -52,8 +53,7 @@ function Dashboard({ location }) {
     );
   }
 
-  if (state.user.isLoggedOut) return <Redirect to='/user/login' />;
-  // return <Redirect to='/' />;
+  return <Redirect to='/' />;
 }
 
 export default Dashboard;
