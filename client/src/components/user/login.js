@@ -13,6 +13,7 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { LOGIN_USER } from './types/mutations';
 import { useMutation } from '@apollo/react-hooks';
 import { useApolloClient } from '@apollo/react-hooks';
+import { Main } from '../layouts';
 
 const HoneyPot = styled.input`
   visibility: hidden;
@@ -104,7 +105,7 @@ function Login({ location }) {
       });
     });
     return (
-      <Fragment>
+      <Main>
         <h2>Login Successful</h2>
         <br />
         <br />
@@ -126,12 +127,12 @@ function Login({ location }) {
           }}>
           Go to joke categories
         </Button>
-      </Fragment>
+      </Main>
     );
   }
 
   return (
-    <Fragment>
+    <Main hasUserLogin={false}>
       <h2>Login</h2>
       <form onSubmit={handleFormSubmission} action=''>
         <HoneyPot onChange={handleHoneyPot} type='text' />
@@ -188,7 +189,14 @@ function Login({ location }) {
           </Button>
         </FormControl>
       </form>
-    </Fragment>
+      <div>
+        <br />
+        <br />
+        <p>If you dont have an account, click on the link below to signup.</p>
+        <br />
+        <Link to={{ pathname: '/user/signup' }}>Signup</Link>
+      </div>
+    </Main>
   );
 }
 

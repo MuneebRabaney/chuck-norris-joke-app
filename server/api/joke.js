@@ -7,6 +7,11 @@ class JokeApi extends RESTDataSource {
     this.baseURL = process.env.API_URL;
   }
 
+  async getJokeInCategoryById({ category, id }) {
+    const data = await this.get(`jokes/categories/${category}/${id}`);
+    return data;
+  }
+
   async getJokeCategories() {
     const data = await this.get('jokes/categories');
     return data;

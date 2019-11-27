@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useState, Fragment } from 'react';
 import styled from 'styled-components';
 import dancingChuckNorris from '../../images/danceing-chuck-norris.gif';
+import { Link } from 'react-router-dom';
+import { useApolloClient } from '@apollo/react-hooks';
+import { IS_LOGGED_IN } from '../user/types/queries';
+import { Button } from '@material-ui/core';
 
 const Container = styled.div`
   width: 650px;
@@ -10,6 +14,9 @@ const Container = styled.div`
   position: relative;
   background: #ccc;
   text-align: center;
+  @media only screen and (max-width: 600px) {
+    width: 80%;
+  }
 `;
 
 const Header = styled.h2`
@@ -37,12 +44,45 @@ const DanceChuckDance = styled.div`
   position: relative;
 `;
 
-function Main({ children }) {
+function Main({ children, hasUserLogin = true }) {
+  const client = useApolloClient();
+  let [{ isLoggedIn }, handleUser] = useState({
+    ...client.readQuery({ query: IS_LOGGED_IN }),
+  });
+
+  const handleLogoutUser = event => {
+    localStorage.removeItem('token');
+    const data = { isLoggedIn: false };
+    client.writeData({ data });
+    handleUser({ isLoggedIn: false });
+  };
+
+  const renderUserLoginButton = (
+    <Link to={{ pathname: '/user/login' }}>
+      <span>User login</span>
+    </Link>
+  );
+
+  const renderUserLogoutButton = (
+    <Button onClick={handleLogoutUser}>
+      <span>Logout</span>
+    </Button>
+  );
+
+  const renderUserLoginControlls = (
+    <Fragment>
+      {!isLoggedIn ? renderUserLoginButton : renderUserLogoutButton}
+    </Fragment>
+  );
+
   return (
     <Container>
       <DanceChuckDance />
       <Header>Chuck Norris Jokes</Header>
-      {children}
+      {hasUserLogin && renderUserLoginControlls}
+      <br />
+      <br />
+      <div>{children}</div>
     </Container>
   );
 }

@@ -18,16 +18,15 @@ const mutations = {
 
     if (!passwordMatch) throw new Error('Invalid User Password');
 
-    const token = jwt.sign(
-      {
-        id: user.id,
-        username: user.email,
-      },
-      'secret-key-goes-here',
-      {
-        expiresIn: '30d',
-      },
-    );
+    const values = {
+      id: user.id,
+      username: user.email,
+    };
+    const secret = 'secret-key-goes-here';
+    const options = {
+      expiresIn: '30d',
+    };
+    const token = jwt.sign(values, secret, options);
     return {
       token,
       user,

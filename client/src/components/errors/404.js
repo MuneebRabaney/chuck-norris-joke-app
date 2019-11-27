@@ -1,11 +1,12 @@
 import React from 'react';
-
+import { Main } from '../layouts';
 function PageNotFound() {
   return (
-    <div>
+    <Main>
       <h2>Page not found</h2>
+      <br />
       <a href='/'>Return Home</a>
-    </div>
+    </Main>
   );
 }
 

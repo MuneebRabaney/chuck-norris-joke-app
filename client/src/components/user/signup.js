@@ -12,6 +12,7 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import SaveIcon from '@material-ui/icons/Save';
 import { CREATE_USER } from './types/mutations';
 import { useMutation } from '@apollo/react-hooks';
+import { Main } from '../layouts';
 
 const HoneyPot = styled.input`
   visibility: hidden;
@@ -90,7 +91,7 @@ function UserSignup({ location }) {
 
   const { toggle, errors } = state.form;
   return (
-    <Fragment>
+    <Main hasUserLogin={false}>
       <h2>Signup as a new user</h2>
       <form onSubmit={handleFormSubmission} action=''>
         <HoneyPot onChange={handleHoneyPot} type='text' />
@@ -166,9 +167,18 @@ function UserSignup({ location }) {
             startIcon={<SaveIcon />}>
             Create new user
           </Button>
+          <div>
+            <br />
+            <br />
+            <p>
+              If you already have an account, click on the link below to login.
+            </p>
+            <br />
+            <Link to={{ pathname: '/user/login' }}>Login</Link>
+          </div>
         </FormControl>
       </form>
-    </Fragment>
+    </Main>
   );
 }
 

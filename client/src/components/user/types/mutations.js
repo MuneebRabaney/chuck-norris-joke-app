@@ -30,6 +30,7 @@ const USER_AUTHENTICATED = gql`
     currentUser(data: $inputs) {
       token
       user {
+        id
         firstname
       }
     }
@@ -46,7 +47,7 @@ const ADD_TO_FAV = gql`
 
 const REMOVE_TO_FAV = gql`
   mutation removeJokeToFav($where: ID!) {
-    removeJokeToFav(where: $) {
+    removeJokeToFav(where: $where) {
       favroite_jokes
     }
   }
