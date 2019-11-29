@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import {
   Button,
@@ -7,12 +7,15 @@ import {
   FormControl,
   InputAdornment,
 } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import SaveIcon from '@material-ui/icons/Save';
 import { CREATE_USER } from './types/mutations';
 import { useMutation } from '@apollo/react-hooks';
 import { Main } from '../layouts';
+import { graphql } from 'react-apollo';
+import { IS_LOGGED_IN } from '../user/types/queries';
+import { LoadingSpinner } from '../loaders';
 
 const HoneyPot = styled.input`
   visibility: hidden;
@@ -20,7 +23,7 @@ const HoneyPot = styled.input`
   display: none;
 `;
 
-function UserSignup({ location }) {
+function UserSignup({ location, isLoggedIn }) {
   const [createUser, { loading, error, data }] = useMutation(CREATE_USER);
 
   const [state, setState] = useState({
@@ -38,8 +41,10 @@ function UserSignup({ location }) {
     },
   });
 
-  if (loading) return 'loading...';
-  if (error) return 'Error!';
+  if (error) return `Error! ${error.message}`;
+
+  if (isLoggedIn) return <Redirect to='/user/login' />;
+
   if (data && data.createUser) {
     const { email, password, firstname } = data.createUser;
     return (
@@ -93,6 +98,7 @@ function UserSignup({ location }) {
   return (
     <Main hasUserLogin={false}>
       <h2>Signup as a new user</h2>
+      {loading && <LoadingSpinner />}
       <form onSubmit={handleFormSubmission} action=''>
         <HoneyPot onChange={handleHoneyPot} type='text' />
         <FormControl>
@@ -182,4 +188,13 @@ function UserSignup({ location }) {
   );
 }
 
-export default UserSignup;
+export default graphql(IS_LOGGED_IN, {
+  props: ({ data: { loading, error, networkStatus, isLoggedIn } }) => {
+    if (loading) return { loading };
+    if (error) return { error };
+    return {
+      networkStatus,
+      isLoggedIn,
+    };
+  },
+})(UserSignup);

@@ -1,59 +1,34 @@
-import React, { useState, Fragment } from 'react';
+import React from 'react';
+import { Redirect, Link } from 'react-router-dom';
 import { Button } from '@material-ui/core';
-import { Redirect } from 'react-router-dom';
-import { IS_LOGGED_IN } from './types/queries';
-import { useApolloClient } from '@apollo/react-hooks';
-// import { CategoryList } from '../joke';
-import styled from 'styled-components';
+import { Main } from '../layouts';
+import { graphql } from 'react-apollo';
+import { IS_LOGGED_IN } from '../user/types/queries';
 
-const Footer = styled.footer`
-  button {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-  }
-`;
+function Dashboard({ location, isLoggedIn }) {
+  if (!isLoggedIn) return <Redirect to='/user/login' />;
 
-function Dashboard({ location }) {
-  const client = useApolloClient();
-  const [state, setState] = useState({
-    user: {
-      isLoggedOut: false,
-    },
-  });
-
-  const { isLoggedIn } = client.readQuery({ query: IS_LOGGED_IN });
-
-  const handleLogoutUser = event => {
-    const newState = Object.assign({}, state);
-    newState.user.isLoggedOut = true;
-    setState(newState);
-    localStorage.removeItem('token');
-    client.resetStore();
-  };
-
-  if (state.user.isLoggedOut) {
-    return <Redirect to='/user/login' />;
-  }
-
-  if (isLoggedIn) {
-    return (
-      <Fragment>
-        <h2>Hello #username </h2>
-        <br />
-        <Footer>
-          <Button
-            color='primary'
-            variant='contained'
-            onClick={handleLogoutUser}>
-            Logout
-          </Button>
-        </Footer>
-      </Fragment>
-    );
-  }
-
-  return <Redirect to='/' />;
+  return (
+    <Main hasUserLogin={false}>
+      <h2>Hello #username </h2>
+      <Button
+        color='primary'
+        component={Link}
+        variant='contained'
+        to={{ pathname: '/jokes/categories' }}>
+        Go to joke categories
+      </Button>
+    </Main>
+  );
 }
 
-export default Dashboard;
+export default graphql(IS_LOGGED_IN, {
+  props: ({ data: { loading, error, networkStatus, isLoggedIn } }) => {
+    if (loading) return { loading };
+    if (error) return { error };
+    return {
+      networkStatus,
+      isLoggedIn,
+    };
+  },
+})(Dashboard);

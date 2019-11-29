@@ -1,4 +1,5 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState } from 'react';
+import gql from 'graphql-tag';
 import styled from 'styled-components';
 import dancingChuckNorris from '../../images/danceing-chuck-norris.gif';
 import { Link } from 'react-router-dom';
@@ -10,12 +11,13 @@ const Container = styled.div`
   width: 650px;
   min-height: 300px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 20px 70px 20px;
   position: relative;
   background: #ccc;
   text-align: center;
-  @media only screen and (max-width: 600px) {
+  @media only screen and (max-width: 700px) {
     width: 80%;
+    min-height: 450px;
   }
 `;
 
@@ -44,7 +46,19 @@ const DanceChuckDance = styled.div`
   position: relative;
 `;
 
-function Main({ children, hasUserLogin = true }) {
+const UserLogin = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 30px;
+`;
+
+const UPDATE_IS_LOGGED_IN = gql`
+  mutation updateIsLoggedIn($isLoggedIn: Boolean) {
+    updateIsLoggedIn(isLoggedIn: $isLoggedIn) @client
+  }
+`;
+
+function Main({ children, hasUserLogin = true, redux }) {
   const client = useApolloClient();
   let [{ isLoggedIn }, handleUser] = useState({
     ...client.readQuery({ query: IS_LOGGED_IN }),
@@ -52,9 +66,15 @@ function Main({ children, hasUserLogin = true }) {
 
   const handleLogoutUser = event => {
     localStorage.removeItem('token');
-    const data = { isLoggedIn: false };
-    client.writeData({ data });
+    const data = {
+      isLoggedIn: false,
+    };
+
     handleUser({ isLoggedIn: false });
+    client.mutate({
+      mutation: UPDATE_IS_LOGGED_IN,
+      variables: data,
+    });
   };
 
   const renderUserLoginButton = (
@@ -70,9 +90,9 @@ function Main({ children, hasUserLogin = true }) {
   );
 
   const renderUserLoginControlls = (
-    <Fragment>
+    <UserLogin>
       {!isLoggedIn ? renderUserLoginButton : renderUserLogoutButton}
-    </Fragment>
+    </UserLogin>
   );
 
   return (

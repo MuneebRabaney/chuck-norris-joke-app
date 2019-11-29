@@ -12,7 +12,7 @@ const mutations = {
     const { email, password } = data;
 
     const user = await prisma.user({ email });
-    if (!user) throw new Error('Invalid User');
+    if (!user) throw new Error('Invalid User Email');
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 

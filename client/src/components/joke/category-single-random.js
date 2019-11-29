@@ -1,6 +1,7 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
+import { graphql } from 'react-apollo';
 import styled from 'styled-components';
-import { useQuery, useApolloClient } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import { Link } from 'react-router-dom';
 import { LoadingSpinner } from '../loaders';
 import { CategoryNotFound } from '../errors';
@@ -69,20 +70,21 @@ const Footer = styled.footer`
   }
 `;
 
-function CategorySingleRandom({ location, history }) {
-  const client = useApolloClient();
-  const [{ isLoggedIn }] = useState({
-    ...client.readQuery({ query: IS_LOGGED_IN }),
-  });
+function CategorySingleRandom({ isLoggedIn, location }) {
+  const getCategoryFromUrlIfNotInState = ({ location }) => {
+    const { state } = location;
+    if (typeof state !== 'undefined' && state.category) return state.category;
+    let category = location.pathname.split('categories/')[1];
+    category.replace('/', ''); // clean up incase a use past with a "/"
+    return category;
+  };
 
-  console.log(client);
+  const category = getCategoryFromUrlIfNotInState({ location });
 
   const queryOptions = {
-    fetchPolicy: 'no-cache',
+    fetchPolicy: 'cache-first',
     notifyOnNetworkStatusChange: true,
-    variables: {
-      category: location.state ? location.state.category : '',
-    },
+    variables: { category },
   };
 
   const { loading, error, data, refetch, networkStatus } = useQuery(
@@ -168,4 +170,18 @@ function CategorySingleRandom({ location, history }) {
   );
 }
 
-export default CategorySingleRandom;
+// TODO:
+// Neaten this up
+// this is how we map our new incomming props
+export default graphql(IS_LOGGED_IN, {
+  props: ({ data: { loading, error, networkStatus, isLoggedIn } }) => {
+    if (loading) return { loading };
+    if (error) return { error };
+    return {
+      networkStatus,
+      isLoggedIn,
+    };
+  },
+})(CategorySingleRandom);
+
+// export default CategorySingleRandom;
