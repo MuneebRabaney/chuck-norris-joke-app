@@ -8,9 +8,9 @@ Built with React and Apollo with love from the Mother City.
 
 Please make sure you have docker installed as the scripts will pull in the docker container for the prisma set up
 
-Set up on the server
+To set up the project on the server and client run the following from then project root:
 
-On the server
+For the Server setup
 
 1. `cd ./server`
 2. `npm install`
@@ -20,7 +20,7 @@ On the server
 6. `prisma generate`
 7. `node index.js` or `nodemon index.js`
 
-On the client
+For the Client setup
 
 1. `cd ./client`
 2. `npm install`
