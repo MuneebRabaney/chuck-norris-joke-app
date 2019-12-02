@@ -183,5 +183,3 @@ export default graphql(IS_LOGGED_IN, {
     };
   },
 })(CategorySingleRandom);
-
-// export default CategorySingleRandom;

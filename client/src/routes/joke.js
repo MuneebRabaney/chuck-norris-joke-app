@@ -9,6 +9,7 @@ const route = [
   },
   {
     exact: true,
+    expose: ['auth'],
     url: '/jokes/categories/:category',
     component: Joke.CategorySingleRandom,
     description: 'Random Chuck Norris joke in a selected category',

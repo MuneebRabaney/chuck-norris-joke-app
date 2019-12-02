@@ -17,7 +17,8 @@ const clientState = {
     Mutation: {
       updateIsLoggedIn: async (_, { isLoggedIn }, { cache, getCacheKey }) => {
         console.log('running mutation');
-
+        console.log({ isLoggedIn });
+        console.log({ cache, getCacheKey });
         await cache.writeData({ data: { isLoggedIn } });
         return null;
       },
