@@ -26,4 +26,4 @@ For the Client setup
 2. `npm install`
 3. `npm run start`
 
-You will now have a working developemt version of the project
+You will now have a working development version of the project
